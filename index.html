@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giám sát Môi trường LoRa</title>
+    <link rel="stylesheet" href="body.css">
+</head>
+<body>
+
+    <h1>Bảng điều khiển Môi trường LoRa</h1>
+
+    <!-- Thanh trạng thái MQTT -->
+    <div id="status" class="status-loading">Đang kết nối server...</div>
+
+    <!-- ═══════════════════════════════════════════════════
+         PHẦN 1: NODE CARDS — Trạng thái thời gian thực
+         Cards được tạo động bởi app.js khi nhận dữ liệu SSE
+    ════════════════════════════════════════════════════ -->
+    <h2>Trạng thái Nodes (Thời gian thực)</h2>
+    <div class="container" id="nodeContainer">
+        <div class="no-data" id="noDataMsg">
+            <span>⏳</span> Đang chờ dữ liệu từ các node LoRa...
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         PHẦN 2: BIỂU ĐỒ THỜI GIAN THỰC
+         Các cột biểu đồ được tạo động theo từng node
+    ════════════════════════════════════════════════════ -->
+    <h2>Biểu đồ Thời gian thực</h2>
+    <div class="realtime-charts-wrapper" id="realtimeChartsWrapper">
+        <div class="no-chart-data">⏳ Đang chờ dữ liệu từ các node...</div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════
+         PHẦN 3: LỊCH SỬ & TRÍCH XUẤT DỮ LIỆU
+         Kết nối PostgreSQL qua REST API /api/history
+    ════════════════════════════════════════════════════ -->
+    <div class="history-container">
+        <h2>Lịch sử &amp; Trích xuất Dữ liệu </h2>
+
+        <!-- Thanh điều khiển lọc dữ liệu -->
+        <div class="history-controls">
+
+            <label for="historyNodeSelect">Node:</label>
+            <select id="historyNodeSelect">
+                <option value="">Tất cả nodes</option>
+            </select>
+
+            <label for="quickTimeSelect">Xem nhanh:</label>
+            <select id="quickTimeSelect">
+                <option value="custom">Tùy chọn (bên dưới)</option>
+                <option value="30">30 phút trước</option>
+                <option value="60">1 giờ trước</option>
+                <option value="120">2 giờ trước</option>
+                <option value="360">6 giờ trước</option>
+                <option value="720">12 giờ trước</option>
+                <option value="1440">1 ngày trước</option>
+            </select>
+
+            <span class="date-picker-group">
+                <label for="startDate">Từ ngày:</label>
+                <input type="date" id="startDate">
+                <label for="endDate">Đến ngày:</label>
+                <input type="date" id="endDate">
+            </span>
+
+            <!-- Nhóm nút hành động -->
+            <div class="btn-group">
+                <button id="fetchHistoryBtn" class="btn-load">📊 Tải Dữ Liệu</button>
+                <button id="exportCsvBtn"    class="btn-export">⬇ Xuất CSV</button>
+            </div>
+        </div>
+
+        <!-- Trạng thái tải dữ liệu -->
+        <div id="history-status" class="history-status"></div>
+
+        <!-- Biểu đồ lịch sử 2×2 -->
+        <div class="charts-grid">
+            <div class="chart-row">
+                <div class="chart-container">
+                    <canvas id="historyPm1Chart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="historyPm25Chart"></canvas>
+                </div>
+            </div>
+            <div class="chart-row">
+                <div class="chart-container">
+                    <canvas id="historyPm10Chart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="historyCoChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bảng thống kê (hiển thị khi có dữ liệu) -->
+        <div id="statsSection" class="stats-section" style="display:none">
+            <h3>Thống kê tóm tắt</h3>
+            <div id="statsTable" class="stats-table-wrap"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0"></script>
+    <script src="app.js"></script>
+</body>
+</html>
